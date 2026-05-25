@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scanning… | Crush Detector AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>" />
+</head>
+<body>
+
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+  <div class="scanlines"></div>
+  <canvas id="particle-canvas"></canvas>
+  <div class="floating-hearts"></div>
+  <button id="sound-toggle">🔊 SOUND ON</button>
+
+  <main class="page page-fade">
+    <div class="loading-wrap glass-card" style="text-align:center;">
+
+      <!-- Spinning scanner SVG -->
+      <div class="scan-circle">
+        <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer ring -->
+          <circle cx="80" cy="80" r="70" stroke="rgba(255,45,120,0.2)" stroke-width="2"/>
+          <!-- Spinning arc -->
+          <circle cx="80" cy="80" r="70"
+            stroke="url(#arcGrad)" stroke-width="3"
+            stroke-dasharray="110 330" stroke-linecap="round"/>
+          <!-- Inner ring -->
+          <circle cx="80" cy="80" r="54" stroke="rgba(168,85,247,0.15)" stroke-width="1.5"/>
+          <circle cx="80" cy="80" r="54"
+            stroke="url(#arcGrad2)" stroke-width="2"
+            stroke-dasharray="70 270" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="arcGrad" x1="0" y1="0" x2="160" y2="160" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff2d78"/>
+              <stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+            <linearGradient id="arcGrad2" x1="160" y1="0" x2="0" y2="160" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#a855f7"/>
+              <stop offset="100%" stop-color="#00e5ff"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="scan-emoji">💖</div>
+      </div>
+
+      <h2 class="loading-title">NEURAL SCAN IN PROGRESS</h2>
+      <p class="loading-names" id="scan-names">
+        Analysing: <span style="color:var(--pink)">{{ user_name }}</span>
+        &amp;
+        <span style="color:var(--cyan)">{{ crush_name }}</span>
+      </p>
+
+      <!-- Percent counter -->
+      <div class="progress-pct" id="pct-display">0%</div>
+
+      <!-- Progress bar -->
+      <div class="progress-wrap" style="margin-bottom:1.4rem;">
+        <div class="progress-bar" id="prog-bar" style="width:0%"></div>
+      </div>
+
+      <!-- Terminal log -->
+      <div class="terminal">
+        <div class="terminal-header">// QUANTUM ROMANCE ENGINE v2.7 — LIVE FEED</div>
+        <div id="log-output"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='particles.js') }}"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+  /* ── Loading screen logic ─────────────────────────────── */
+  const LOGS = [
+    { text: "> Initialising Quantum Romance Engine...",  color: "pink",   delay: 300  },
+    { text: "> Scanning neural pathways...",             color: "",       delay: 900  },
+    { text: "> Loading destiny database...",             color: "purple", delay: 1600 },
+    { text: "> Analysing biometric signatures...",       color: "",       delay: 2300 },
+    { text: "> Consulting romance satellites [3/3]...",  color: "cyan",   delay: 3000 },
+    { text: "> Calculating destiny coefficient...",      color: "",       delay: 3700 },
+    { text: "> Cross-referencing soul data...",          color: "yellow", delay: 4400 },
+    { text: "> Measuring heartbeat resonance...",        color: "pink",   delay: 5100 },
+    { text: "> Running emotional sync algorithm...",     color: "purple", delay: 5800 },
+    { text: "> Decoding quantum entanglement...",        color: "",       delay: 6500 },
+    { text: "> ANALYSIS COMPLETE ✓",                    color: "cyan",   delay: 7200 },
+    { text: "> Preparing compatibility report...",       color: "yellow", delay: 7600 },
+  ];
+
+  const logOut  = document.getElementById("log-output");
+  const progBar = document.getElementById("prog-bar");
+  const pctDisp = document.getElementById("pct-display");
+
+  /* Animated percentage counter */
+  const TOTAL_MS = 8200;
+  const start    = performance.now();
+
+  function updateProgress(now) {
+    const elapsed = now - start;
+    const pct     = Math.min(100, Math.round((elapsed / TOTAL_MS) * 100));
+    progBar.style.width = pct + "%";
+    pctDisp.textContent = pct + "%";
+    if (pct < 100) requestAnimationFrame(updateProgress);
+  }
+  requestAnimationFrame(updateProgress);
+
+  /* Spawn log lines */
+  LOGS.forEach(({ text, color, delay }) => {
+    setTimeout(() => {
+      const line = document.createElement("div");
+      line.className = "log-line" + (color ? " " + color : "");
+      line.textContent = text;
+      logOut.appendChild(line);
+      logOut.scrollTop = logOut.scrollHeight;
+    }, delay);
+  });
+
+  /* Redirect to results after scan finishes */
+  setTimeout(() => {
+    window.location.href = "/results";
+  }, TOTAL_MS + 400);
+
+  </script>
+
+</body>
+</html>

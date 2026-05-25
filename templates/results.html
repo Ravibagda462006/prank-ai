@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results | Crush Detector AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>" />
+</head>
+<body>
+
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+  <div class="scanlines"></div>
+  <canvas id="particle-canvas"></canvas>
+  <div class="floating-hearts"></div>
+  <button id="sound-toggle">🔊 SOUND ON</button>
+
+  <main class="page page-fade" style="padding: 3rem 1rem;">
+    <div class="results-wrap">
+
+      <!-- Header Card -->
+      <div class="glass-card" style="text-align:center; margin-bottom:1.2rem;">
+        <div class="logo-icon" style="font-size:2rem;">💖</div>
+        <h2 class="site-title" style="font-size:clamp(1rem,4vw,1.4rem); margin-bottom:0.3rem;">
+          COMPATIBILITY RESULTS
+        </h2>
+        <p style="font-family:'Share Tech Mono',monospace; font-size:0.7rem; color:var(--text-dim); letter-spacing:0.08em;">
+          {{ user_name }} &nbsp;✦&nbsp; {{ crush_name }}
+        </p>
+      </div>
+
+      <!-- Big Score -->
+      <div class="glass-card score-hero" style="margin-bottom:1.2rem;">
+        <div class="score-big" id="score-display">0%</div>
+        <div class="score-label">OVERALL COMPATIBILITY SCORE</div>
+        <div class="score-verdict" id="verdict-text">CALCULATING...</div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-grid">
+
+        <div class="metric-card" style="animation-delay:0.1s">
+          <div class="metric-name">💘 Physical Attraction</div>
+          <div class="metric-bar-wrap">
+            <div class="metric-bar" id="bar-physical" style="width:0%"></div>
+          </div>
+          <div class="metric-score" id="score-physical">0%</div>
+        </div>
+
+        <div class="metric-card" style="animation-delay:0.2s">
+          <div class="metric-name">🧠 Mental Connection</div>
+          <div class="metric-bar-wrap">
+            <div class="metric-bar" id="bar-mental" style="width:0%"></div>
+          </div>
+          <div class="metric-score" id="score-mental">0%</div>
+        </div>
+
+        <div class="metric-card" style="animation-delay:0.3s">
+          <div class="metric-name">⭐ Destiny Alignment</div>
+          <div class="metric-bar-wrap">
+            <div class="metric-bar" id="bar-destiny" style="width:0%"></div>
+          </div>
+          <div class="metric-score" id="score-destiny">0%</div>
+        </div>
+
+        <div class="metric-card" style="animation-delay:0.4s">
+          <div class="metric-name">💬 Communication</div>
+          <div class="metric-bar-wrap">
+            <div class="metric-bar" id="bar-comm" style="width:0%"></div>
+          </div>
+          <div class="metric-score" id="score-comm">0%</div>
+        </div>
+
+        <div class="metric-card" style="animation-delay:0.5s; grid-column: span 2;">
+          <div class="metric-name">💞 Emotional Sync</div>
+          <div class="metric-bar-wrap">
+            <div class="metric-bar" id="bar-emotional" style="width:0%"></div>
+          </div>
+          <div class="metric-score" id="score-emotional">0%</div>
+        </div>
+
+      </div>
+
+      <!-- Reveal prompt -->
+      <div class="glass-card" style="text-align:center;" id="reveal-card">
+        <p style="font-family:'Share Tech Mono',monospace; font-size:0.8rem; color:var(--text-dim); letter-spacing:0.07em; margin-bottom:1rem;">
+          ⚡ QUANTUM ANALYSIS FINALISED ⚡
+        </p>
+        <p style="font-family:'Rajdhani',sans-serif; font-size:1.1rem; color:var(--text); margin-bottom:1.2rem; line-height:1.5;">
+          Your full destiny report is ready.<br/>
+          <span style="color:var(--pink);">Tap below to unlock your secret compatibility file.</span>
+        </p>
+        <a href="/prank" class="btn-detect" style="display:inline-block; text-decoration:none; text-align:center;">
+          🔓 UNLOCK FULL REPORT
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='particles.js') }}"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    /* Scores injected from Flask */
+    const SCORES = {
+      overall:       {{ scores.overall }},
+      physical:      {{ scores.physical }},
+      mental:        {{ scores.mental }},
+      destiny:       {{ scores.destiny }},
+      communication: {{ scores.communication }},
+      emotional:     {{ scores.emotional }},
+    };
+
+    const VERDICTS = [
+      "SOULMATES DETECTED ✓",
+      "COSMIC BOND CONFIRMED ✓",
+      "WRITTEN IN THE STARS ✓",
+      "DESTINY LOCKED IN ✓",
+      "QUANTUM MATCH FOUND ✓",
+    ];
+
+    /* Animated counter for a single element */
+    function animateCounter(el, target, duration = 1400, suffix = "%") {
+      const start   = performance.now();
+      const animate = now => {
+        const t   = Math.min(1, (now - start) / duration);
+        const val = Math.round(t * t * (3 - 2 * t) * target); // smooth step
+        el.textContent = val + suffix;
+        if (t < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+    }
+
+    /* Animate bars */
+    function animateBar(barEl, scoreEl, value, delay) {
+      setTimeout(() => {
+        barEl.style.width = value + "%";
+        animateCounter(scoreEl, value);
+      }, delay);
+    }
+
+    /* Run on load */
+    window.addEventListener("DOMContentLoaded", () => {
+      /* Overall score counter */
+      setTimeout(() => {
+        animateCounter(document.getElementById("score-display"), SCORES.overall, 1600);
+        const v = VERDICTS[Math.floor(Math.random() * VERDICTS.length)];
+        setTimeout(() => {
+          document.getElementById("verdict-text").textContent = v;
+        }, 1700);
+      }, 400);
+
+      animateBar(document.getElementById("bar-physical"),  document.getElementById("score-physical"),  SCORES.physical,      600);
+      animateBar(document.getElementById("bar-mental"),    document.getElementById("score-mental"),    SCORES.mental,        800);
+      animateBar(document.getElementById("bar-destiny"),   document.getElementById("score-destiny"),   SCORES.destiny,       1000);
+      animateBar(document.getElementById("bar-comm"),      document.getElementById("score-comm"),      SCORES.communication, 1200);
+      animateBar(document.getElementById("bar-emotional"), document.getElementById("score-emotional"), SCORES.emotional,     1400);
+    });
+  </script>
+
+</body>
+</html>

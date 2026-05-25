@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crush Detector AI — Beta Edition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>" />
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Scanlines Overlay -->
+  <div class="scanlines"></div>
+
+  <!-- Particle Background -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Floating Hearts -->
+  <div class="floating-hearts"></div>
+
+  <!-- Sound Toggle -->
+  <button id="sound-toggle">🔊 SOUND ON</button>
+
+  <!-- Main Page -->
+  <main class="page page-fade">
+    <div class="glass-card">
+
+      <!-- Logo / Title -->
+      <div class="logo-area">
+        <div class="logo-icon">💖</div>
+        <h1 class="site-title">CRUSH DETECTOR AI</h1>
+        <span class="site-badge">✦ BETA EDITION ✦</span>
+        <p class="site-subtitle">Powered by Quantum Romance Engine™ v2.7</p>
+      </div>
+
+      <hr class="neon-divider" />
+
+      <!-- Input Form -->
+      <form action="/scan" method="POST" id="detect-form" autocomplete="off">
+
+        <div class="input-group">
+          <label class="input-label" for="user_name">▸ Your Name</label>
+          <input
+            type="text"
+            id="user_name"
+            name="user_name"
+            class="neon-input"
+            placeholder="Enter your name..."
+            maxlength="50"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="crush_name">▸ Your Crush's Name</label>
+          <input
+            type="text"
+            id="crush_name"
+            name="crush_name"
+            class="neon-input"
+            placeholder="Enter crush name..."
+            maxlength="50"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-detect" id="detect-btn">
+          <span class="btn-icon">⚡</span>
+          ANALYSE COMPATIBILITY
+        </button>
+
+      </form>
+
+      <hr class="neon-divider" />
+
+      <!-- Footer note -->
+      <p style="text-align:center; font-family:'Share Tech Mono',monospace; font-size:0.62rem; color:var(--text-dim); letter-spacing:0.08em;">
+        QUANTUM NEURAL SCAN · 99.7% ACCURACY · CLASSIFIED BETA
+      </p>
+
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='particles.js') }}"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    /* Button click feedback */
+    document.getElementById("detect-btn").addEventListener("click", function () {
+      playSound("/static/sounds/click.mp3", 0.5);
+      this.textContent = "⏳ INITIALISING SCAN...";
+    });
+
+    /* Glow effect on input type */
+    document.querySelectorAll(".neon-input").forEach(inp => {
+      inp.addEventListener("input", () => {
+        inp.style.borderColor = inp.value.length > 0
+          ? "var(--pink)" : "var(--border)";
+      });
+    });
+  </script>
+
+</body>
+</html>
